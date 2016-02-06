@@ -1,6 +1,8 @@
 /**
  *  Class responsible for creating the application layer and initial all those nodes in system
+ *
  */
+import java.util.*;
 public class Application{
 
 	List<Node> nodeList = new List<>();
@@ -30,8 +32,7 @@ public class Application{
 	}
 
 	public static void main(String[] args){
-
+		Application application = new Application();
+		application.applicationRun(3);
 	}
-
-
 }

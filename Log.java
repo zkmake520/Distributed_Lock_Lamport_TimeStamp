@@ -1,5 +1,5 @@
 public class Log{
-	public static out(String output){
+	public static void out(String output){
 		System.out.println(output);
 	}
 }
