@@ -18,7 +18,7 @@ public class Util{
 	public static int getTimeFromMessage(String message){
 		return Integer.parseInt(message.split(":")[2]);
 	}
-	public static Strinng getContentFromMessage(String message){
+	public static String getContentFromMessage(String message){
 		return message.split(":")[0];
 	} 
 	public static String getNameFromMessage(String message){

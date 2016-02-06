@@ -16,9 +16,10 @@ public class Client{
 
 	public boolean sendRequestMessage(List<Integer> ports){
 		Log.out("Client:"+this.name+" send request locking message");
+		Socket clientSocket = null;
 		for(int port:ports){
 			try{
-				Socket clientSocket = new Socket(Util.LOCAL_HOST, port);
+			    clientSocket = new Socket(Util.LOCAL_HOST, port);
 				OutputStream outToServer = clientSocket.getOutputStream();
 				DataOutputStream out = new DataOutputStream(outToServer);
 				String requestMessage = Util.composeRequestMessage(this.name,timeStamp.getTime());
@@ -27,35 +28,36 @@ public class Client{
 				DataInputStream in = new DataInputStream(inFromServer);
 				String reply = in.readUTF();
 				String body =  Util.getContentFromMessage(reply);
-				String time = Util.getTimeFromMessage(reply);
-				timeStamp.setReceivedTime();
+				int time = Util.getTimeFromMessage(reply);
+				timeStamp.setReceivedTime(time);
 				if(body.equals(Util.REPLY)){
 
 				}
 				else{
 					Log.out("Node:"+port+" reply wrong message");
 				}
+				clientSocket.close();
 			}catch(Exception e){
 
-			}finally{
-				clientSocket.close();
-				return false;
 			}
 		}
 		return true;
 	}
 
 	public void sendLockReleaseMessage(HashMap<String,Socket> waitingSockets){
-		while(!waitingQueue.isEmpty()){
-			String addr = waitingQueue.front();	
-			waitingQueue.pop();
-			Socket socket = waitingSockets.get(addr);
-			waitingSockets.remove(addr);
-			OutputStream outToClient = socket.getOutputStream();
-			DataOutputStream out = new DataOutputStream(outToClient);
-			String respondMessage = Util.composeRespondMessage(this.name,timeStamp.getTime());
-			out.writeUTF(respondMessage);
-		}	
+		try{	
+			while(!waitingQueue.isEmpty()){
+				String addr = waitingQueue.poll();	
+				Socket socket = waitingSockets.get(addr);
+				waitingSockets.remove(addr);
+				OutputStream outToClient = socket.getOutputStream();
+				DataOutputStream out = new DataOutputStream(outToClient);
+				String respondMessage = Util.composeRespondMessage(this.name,timeStamp.getTime());
+				out.writeUTF(respondMessage);
+			}	
+		}catch(Exception e){
+
+		}
 	}
 
 }

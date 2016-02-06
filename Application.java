@@ -5,8 +5,8 @@
 import java.util.*;
 public class Application{
 
-	List<Node> nodeList = new List<>();
-	List<Integer> portList = new List<>();
+	List<Node> nodeList = new ArrayList<>();
+	List<Integer> portList = new ArrayList<>();
 	static String idPrefix = "Node";
 	static int portBase = 3000;
 
@@ -21,7 +21,7 @@ public class Application{
 		}
 	}
 
-	public void initialNodes(){
+	public void initialNodes(int num){
 		for(int i = 0;i < num; i++){
 			String id = idPrefix+i;
 			int port = i+portBase;	

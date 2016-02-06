@@ -6,10 +6,10 @@ public class Server extends Thread{
 	String name;
 	int port;
 	Queue<String> waitingQueue;
-	State state;
+	NodeState state;
 	TimeStamp timeStamp;
 	HashMap<String, Socket> waitingSockets ;
-	public Server(String id,int port,State state, TimeStamp timeStamp,Queue<String> waitingQueue,
+	public Server(String id,int port,NodeState state, TimeStamp timeStamp,Queue<String> waitingQueue,
 					HashMap<String,Socket> waitingSockets){
 		this.name = id;
 		this.port = port;
@@ -21,8 +21,13 @@ public class Server extends Thread{
 
 	@Override
 	public void run(){
-		ServerSocket serverSocket = new ServerSocket(port);
-		Log.out("Server:"+port+" has started");
+		ServerSocket serverSocket = null;
+		try{
+			serverSocket = new ServerSocket(port);
+			Log.out("Server:"+port+" has started");
+		}catch(Exception e){
+
+		}
 		while(true){
 			try{
 				Socket connected = serverSocket.accept();
@@ -58,7 +63,7 @@ public class Server extends Thread{
 								waitingQueue.add(clientAddr);
 								waitingSockets.put(clientAddr,connected);
 							}
-							else if(timeStamp.getTime() == requestTime && String.compare(this.name,clientName)==1){
+							else if(timeStamp.getTime() == requestTime && this.name.compareTo(clientName)==1){
 								waitingQueue.add(clientAddr);
 								waitingSockets.put(clientAddr,connected);
 							}
@@ -81,7 +86,7 @@ public class Server extends Thread{
 			}
 		}
 	}
-	public void setState(State state){
+	public void setState(NodeState state){
 		this.state = state;
 	}
 
