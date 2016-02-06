@@ -24,12 +24,13 @@ public class Server extends Thread{
 		ServerSocket serverSocket = null;
 		try{
 			serverSocket = new ServerSocket(port);
-			Log.out("Server:"+port+" has started");
+			Log.out("Server: "+this.name+" has started");
 		}catch(Exception e){
 
 		}
 		while(true){
 			try{
+				Log.out("Server: "+this.name+" wait for connection");
 				Socket connected = serverSocket.accept();
 				String clientAddr = Util.composeClientAddr(connected);
 				InputStream inFromClient = connected.getInputStream();
@@ -39,7 +40,7 @@ public class Server extends Thread{
 				String clientName = Util.getNameFromMessage(inMessage);
 				int requestTime = Util.getTimeFromMessage(inMessage);
 
-				Log.out("Node "+this.name+" recevied: Client "+clientName+" send lock request with timeStamp "+requestTime);
+				Log.out("Server: "+this.name+" "+state+" recevied request from client "+clientName+" with timestamp "+requestTime);
 
 				OutputStream outToClient = connected.getOutputStream();
 				DataOutputStream out = new DataOutputStream(outToClient);

@@ -17,6 +17,7 @@ public class Application{
 
 	public void startAllNodes(){
 		for(Node node : nodeList){
+			node.setNeighboors(portList);
 			node.start();
 		}
 	}
@@ -27,6 +28,7 @@ public class Application{
 			int port = i+portBase;	
 			Node node = new Node(id,port);
 			nodeList.add(node);
+			portList.add(port);
 		}
 		return;
 	}

@@ -52,9 +52,9 @@ public class Node extends Thread{
 		timeStamp.increTime();
 		// this.server.setTimeStamp(timeStamp);
 		setState(NodeState.WAIT);
-		Log.out("Node "+id+" current timeStamp "+timeStamp.getTime()+" state "+state);
-		setState(NodeState.HOLD);
+		Log.out("Node:"+id+" current timeStamp "+timeStamp.getTime()+" state "+state);
 		boolean rst = this.client.sendRequestMessage(ports);
+		setState(NodeState.HOLD);
 		timeStamp.updateTimeStamp();
 		return rst;
 	}
@@ -79,19 +79,19 @@ public class Node extends Thread{
 			try{
 				Thread.sleep(500);
 				boolean requestLock = sendRequestMessage();
-				Log.out("Node "+id+" achieved the lock current timeStamp "+timeStamp.getTime()+" state "+state);
+				Log.out("Node:"+id+" achieved the lock current timeStamp "+timeStamp.getTime()+" state "+state);
 				if(requestLock == true){
 					//Critical Section
-					Log.out("Node "+id+" enter critical section");
+					Log.out("Node:"+id+" enter critical section");
 					Thread.sleep(500);
-					Log.out("Node "+id+" leave critial section and release lock");
+					Log.out("Node:"+id+" leave critial section and release lock");
 					releaseLock();
 				}
 				else{
-					Log.out("Node "+id+" request lock failed");
+					Log.out("Node:"+id+" request lock failed");
 				}	
 			}catch(Exception e){
-				
+
 			}
 		}
 

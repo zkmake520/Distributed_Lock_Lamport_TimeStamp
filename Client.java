@@ -15,30 +15,33 @@ public class Client{
 	}
 
 	public boolean sendRequestMessage(List<Integer> ports){
-		Log.out("Client:"+this.name+" send request locking message");
+	
 		Socket clientSocket = null;
 		for(int port:ports){
-			try{
-			    clientSocket = new Socket(Util.LOCAL_HOST, port);
-				OutputStream outToServer = clientSocket.getOutputStream();
-				DataOutputStream out = new DataOutputStream(outToServer);
-				String requestMessage = Util.composeRequestMessage(this.name,timeStamp.getTime());
-				out.writeUTF(requestMessage);
-				InputStream inFromServer = clientSocket.getInputStream();
-				DataInputStream in = new DataInputStream(inFromServer);
-				String reply = in.readUTF();
-				String body =  Util.getContentFromMessage(reply);
-				int time = Util.getTimeFromMessage(reply);
-				timeStamp.setReceivedTime(time);
-				if(body.equals(Util.REPLY)){
+			if(port != this.port){
+				try{
+					Log.out("Client: "+this.name+" send lock request to " + port);
+				    clientSocket = new Socket(Util.LOCAL_HOST, port);
+					OutputStream outToServer = clientSocket.getOutputStream();
+					DataOutputStream out = new DataOutputStream(outToServer);
+					String requestMessage = Util.composeRequestMessage(this.name,timeStamp.getTime());
+					out.writeUTF(requestMessage);
+					InputStream inFromServer = clientSocket.getInputStream();
+					DataInputStream in = new DataInputStream(inFromServer);
+					String reply = in.readUTF();
+					String body =  Util.getContentFromMessage(reply);
+					int time = Util.getTimeFromMessage(reply);
+					timeStamp.setReceivedTime(time);
+					if(body.equals(Util.REPLY)){
+
+					}
+					else{
+						Log.out("Node:"+port+" reply wrong message");
+					}
+					clientSocket.close();
+				}catch(Exception e){
 
 				}
-				else{
-					Log.out("Node:"+port+" reply wrong message");
-				}
-				clientSocket.close();
-			}catch(Exception e){
-
 			}
 		}
 		return true;

@@ -23,7 +23,7 @@ public class TimeStamp{
 	}
 	public void updateTimeStamp(){
 		if(this.time < receivedTime){
-			this.time = receivedTime;
+			this.time = receivedTime+1;
 		}
 	}
 
