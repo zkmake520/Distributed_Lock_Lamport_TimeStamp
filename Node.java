@@ -4,11 +4,13 @@ public class Node{
 	private Client client;
 	private Server server;
 	private List<Integer> ports;
+	private int state
 	public Node(String id,int port){
 		this.id = id;
 		this.port = port;
 		client = new Client(id,port);
 		server = new Server(id,port);
+		startListen();
 	}	
 	public void setNeighboors(List<Integer> ports){
 		this.ports = ports;
@@ -34,5 +36,12 @@ public class Node{
 
 	}
 
-	
+	private boolean sendRequestMessage(){
+		return this.client.sendRequestMessage(ports);
+	}
+
+	private void startListen(){
+		server.start();
+	}
+
 }
