@@ -41,7 +41,7 @@ public class Client{
 					}
 					clientSocket.close();
 				}catch(Exception e){
-
+					e.printStackTrace();
 				}
 			}
 		}
@@ -49,10 +49,11 @@ public class Client{
 	}
 
 	public void sendLockReleaseMessage(HashMap<String,Socket> waitingSockets){
+		Socket socket = null;
 		try{	
 			while(!waitingQueue.isEmpty()){
 				String addr = waitingQueue.poll();	
-				Socket socket = waitingSockets.get(addr);
+				socket = waitingSockets.get(addr);
 				waitingSockets.remove(addr);
 				OutputStream outToClient = socket.getOutputStream();
 				DataOutputStream out = new DataOutputStream(outToClient);
@@ -62,6 +63,14 @@ public class Client{
 			}	
 		}catch(Exception e){
 
+		}finally{
+			if(socket != null && !socket.isClosed()){
+				try{
+					socket.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

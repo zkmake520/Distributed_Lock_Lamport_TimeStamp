@@ -22,7 +22,7 @@ public class Application{
 				node.start();
 			}
 		}catch(Exception e){
-
+			e.printStackTrace();
 		}
 
 	}

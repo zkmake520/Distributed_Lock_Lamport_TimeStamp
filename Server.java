@@ -97,14 +97,14 @@ public class Server extends Thread{
 
 				}
 			}catch(Exception e){
-
-			}
+				e.printStackTrace();
+			} 
 		}
 		try{
 			serverSocket.close();
 		}
 		catch(Exception e){
-
+			e.printStackTrace();
 		}
 		Log.out("Server: "+name+" server finished");
 	}

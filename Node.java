@@ -54,7 +54,15 @@ public class Node extends Thread{
 	}
 	private void cleanup(){
 		if(!waitingQueue.isEmpty()){
-			Log.out("Node: "+id+" waitingQueue is no empty");
+			while(!waitingQueue.isEmpty()){
+				String addr = waitingQueue.poll();	
+				Socket socket = waitingSockets.get(addr);
+				try{
+					socket.close();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
 		}
 		this.server.finishServer();
 	}
@@ -79,8 +87,8 @@ public class Node extends Thread{
 					Log.out("Node: "+id+" request lock failed");
 				}	
 			}catch(Exception e){
-
-			}
+				e.printStackTrace();
+			} 
 		}
 		Log.out("Node: "+id+" finished job");
 		cleanup();	
