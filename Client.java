@@ -31,7 +31,8 @@ public class Client{
 					String reply = in.readUTF();
 					String body =  Util.getContentFromMessage(reply);
 					int time = Util.getTimeFromMessage(reply);
-					timeStamp.setReceivedTime(time);
+					String name = Util.getNameFromMessage(reply);
+					timeStamp.setReceivedTime(time,this.name,name,true);
 					if(body.equals(Util.REPLY)){
 
 					}

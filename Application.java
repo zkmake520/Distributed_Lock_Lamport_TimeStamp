@@ -16,10 +16,15 @@ public class Application{
 	}
 
 	public void startAllNodes(){
-		for(Node node : nodeList){
-			node.setNeighboors(portList);
-			node.start();
+		try{
+			for(Node node : nodeList){
+				node.setNeighboors(portList);
+				node.start();
+			}
+		}catch(Exception e){
+
 		}
+
 	}
 
 	public void initialNodes(int num){

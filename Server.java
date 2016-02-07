@@ -9,6 +9,7 @@ public class Server extends Thread{
 	NodeState state;
 	TimeStamp timeStamp;
 	HashMap<String, Socket> waitingSockets ;
+	boolean finished = false;
 	public Server(String id,int port,NodeState state, TimeStamp timeStamp,Queue<String> waitingQueue,
 					HashMap<String,Socket> waitingSockets){
 		this.name = id;
@@ -24,14 +25,21 @@ public class Server extends Thread{
 		ServerSocket serverSocket = null;
 		try{
 			serverSocket = new ServerSocket(port);
+			serverSocket.setSoTimeout(5000);
 			Log.out("Server: "+this.name+" has started");
 		}catch(Exception e){
 
 		}
-		while(true){
+		while(finished == false){
 			try{
-				Log.out("Server: "+this.name+" wait for connection");
-				Socket connected = serverSocket.accept();
+				Socket connected = null;
+				try{
+				    connected = serverSocket.accept();
+				}catch (SocketTimeoutException e){
+					if(finished == true){
+						break;
+					}
+				}
 				String clientAddr = Util.composeClientAddr(connected);
 				InputStream inFromClient = connected.getInputStream();
 				DataInputStream in = new DataInputStream(inFromClient);
@@ -39,36 +47,41 @@ public class Server extends Thread{
 				String body = Util.getContentFromMessage(inMessage);
 				String clientName = Util.getNameFromMessage(inMessage);
 				int requestTime = Util.getTimeFromMessage(inMessage);
-
-				Log.out("Server: "+this.name+" "+state+" recevied request from client "+clientName+" with timestamp "+requestTime);
-
 				OutputStream outToClient = connected.getOutputStream();
 				DataOutputStream out = new DataOutputStream(outToClient);
+				timeStamp.setReceivedTime(requestTime,name,clientName,true);
 				if(body.equals(Util.REQUEST_MESSAGE)){
 					switch(state){
 						case FREE:
-							timeStamp.setReceivedTime(requestTime);
-							timeStamp.updateTimeStamp();
+							Log.out("Server: "+this.name+" state "+state+
+				 " reply to client "+clientName+" with timestamp "+requestTime );
+							timeStamp.updateTimeStamp(name);
 							String reply = Util.composeRespondMessage(this.name,timeStamp.getTime());
 							out.writeUTF(reply);
 							connected.close();
 							break;
 						case HOLD:
-							timeStamp.setReceivedTime(requestTime);
+							Log.out("Server: "+this.name+" state "+state+
+				 " add client "+clientName+" with timestamp "+requestTime + " to queue");
 							waitingQueue.add(clientAddr);
 							waitingSockets.put(clientAddr,connected);
 							break;
 						case WAIT:
 							if(timeStamp.getTime() < requestTime){
-								timeStamp.setReceivedTime(requestTime);
+								Log.out("Server: "+this.name+" state "+state+
+				 " add client "+clientName+" with timestamp "+requestTime + " to queue");
 								waitingQueue.add(clientAddr);
 								waitingSockets.put(clientAddr,connected);
 							}
-							else if(timeStamp.getTime() == requestTime && this.name.compareTo(clientName)==1){
+							else if(timeStamp.getTime() == requestTime && this.name.compareTo(clientName)<0){
+								Log.out("Server: "+this.name+" state "+state+
+				 " add client "+clientName+" with timestamp "+requestTime + " to queue");
 								waitingQueue.add(clientAddr);
 								waitingSockets.put(clientAddr,connected);
 							}
 							else{
+								Log.out("Server: "+this.name+" state "+state+
+				 " reply to client "+clientName+" with timestamp "+requestTime);
 								reply = Util.composeRespondMessage(this.name,timeStamp.getTime());
 								out.writeUTF(reply);
 								connected.close();
@@ -86,9 +99,13 @@ public class Server extends Thread{
 
 			}
 		}
+		Log.out("Server: "+name+" server finished");
 	}
 	public void setState(NodeState state){
 		this.state = state;
+	}
+	public void finishServer(){
+		this.finished = true;
 	}
 
 }

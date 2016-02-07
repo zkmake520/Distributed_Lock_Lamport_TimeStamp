@@ -32,30 +32,11 @@ public class Node extends Thread{
 		return ports;
 	}
 
-	// public String getId(){
-	// 	return id;
-	// }
-
-	// public void setId(){
-
-	// }
-
-	// public int getPort(){
-	// 	return port;
-	// }
-
-	// public int setPort(){
-
-	// }
-
 	private boolean sendRequestMessage(){
 		timeStamp.increTime();
-		// this.server.setTimeStamp(timeStamp);
 		setState(NodeState.WAIT);
-		Log.out("Node:"+id+" current timeStamp "+timeStamp.getTime()+" state "+state);
+		Log.out("Node: "+id+" current timeStamp:"+timeStamp.getTime()+" state:"+state);
 		boolean rst = this.client.sendRequestMessage(ports);
-		setState(NodeState.HOLD);
-		timeStamp.updateTimeStamp();
 		return rst;
 	}
 
@@ -71,29 +52,39 @@ public class Node extends Thread{
 		setState(NodeState.FREE);
 		this.client.sendLockReleaseMessage(waitingSockets);
 	}
-
+	private void cleanup(){
+		if(!waitingQueue.isEmpty()){
+			Log.out("Node: "+id+" waitingQueue is no empty");
+		}
+		this.server.finishServer();
+	}
 	@Override
 	public void run(){
 		int cnt = 0;
-		while(cnt++ < 2){
+		while(cnt++ < 1){
 			try{
 				Thread.sleep(500);
 				boolean requestLock = sendRequestMessage();
-				Log.out("Node:"+id+" achieved the lock current timeStamp "+timeStamp.getTime()+" state "+state);
 				if(requestLock == true){
 					//Critical Section
-					Log.out("Node:"+id+" enter critical section");
+					setState(NodeState.HOLD);
+					timeStamp.updateTimeStamp(id);
+					Log.out("Node: "+id+" achieved the lock current timeStamp:"+timeStamp.getTime()+" state:"+state);
+					Log.out("Node: "+id+" enter critical section");
 					Thread.sleep(500);
-					Log.out("Node:"+id+" leave critial section and release lock");
+					Log.out("Node: "+id+" leave critial section and release lock");
 					releaseLock();
 				}
 				else{
-					Log.out("Node:"+id+" request lock failed");
+					Log.out("Node: "+id+" request lock failed");
 				}	
 			}catch(Exception e){
 
 			}
 		}
+		Log.out("Node: "+id+" finished job");
+		cleanup();	
+		return;
 
 	}
 }

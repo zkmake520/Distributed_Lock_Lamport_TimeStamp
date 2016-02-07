@@ -21,16 +21,23 @@ public class TimeStamp{
 	public void setTime(int time){
 		this.time = time;
 	}
-	public void updateTimeStamp(){
+	public void updateTimeStamp(String name){
+		int pre = this.time;
 		if(this.time < receivedTime){
 			this.time = receivedTime+1;
 		}
+		else{
+			this.time++;
+		}
+		Log.out("TimeStamp: "+name+" update time from "+pre+" to "+this.time);
 	}
 
-	public void setReceivedTime(int receivedTime){
+	public void setReceivedTime(int receivedTime, String name,String from,boolean output){
 		if(this.receivedTime < receivedTime){
 			this.receivedTime = receivedTime;
 		}
+		if(output)
+		Log.out("TimeStamp: "+name+" set recevied time "+receivedTime+" from "+from);
 
 	}
 }
