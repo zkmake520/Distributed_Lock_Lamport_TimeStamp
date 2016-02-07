@@ -9,6 +9,7 @@ public class Server extends Thread{
 	NodeState state;
 	TimeStamp timeStamp;
 	HashMap<String, Socket> waitingSockets ;
+	private static final int TIMEOUT = 6000;
 	boolean finished = false;
 	public Server(String id,int port,NodeState state, TimeStamp timeStamp,Queue<String> waitingQueue,
 					HashMap<String,Socket> waitingSockets){
@@ -25,7 +26,7 @@ public class Server extends Thread{
 		ServerSocket serverSocket = null;
 		try{
 			serverSocket = new ServerSocket(port);
-			serverSocket.setSoTimeout(5000);
+			serverSocket.setSoTimeout(TIMEOUT);
 			Log.out("Server: "+this.name+" has started");
 		}catch(Exception e){
 
@@ -98,6 +99,12 @@ public class Server extends Thread{
 			}catch(Exception e){
 
 			}
+		}
+		try{
+			serverSocket.close();
+		}
+		catch(Exception e){
+
 		}
 		Log.out("Server: "+name+" server finished");
 	}

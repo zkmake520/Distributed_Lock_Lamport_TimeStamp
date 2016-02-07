@@ -58,6 +58,7 @@ public class Client{
 				DataOutputStream out = new DataOutputStream(outToClient);
 				String respondMessage = Util.composeRespondMessage(this.name,timeStamp.getTime());
 				out.writeUTF(respondMessage);
+				socket.close();
 			}	
 		}catch(Exception e){
 

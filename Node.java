@@ -61,7 +61,7 @@ public class Node extends Thread{
 	@Override
 	public void run(){
 		int cnt = 0;
-		while(cnt++ < 1){
+		while(cnt++ < 2){
 			try{
 				Thread.sleep(500);
 				boolean requestLock = sendRequestMessage();
