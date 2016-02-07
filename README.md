@@ -4,5 +4,5 @@
   2. Messages are eventually delivered: used reliable TCP protocol
   
 ##TODO
-  1.Failures can occur during message transition
-  2.Servers can fail
+  1. Failures can occur during message transition  
+  2. Servers can fail
